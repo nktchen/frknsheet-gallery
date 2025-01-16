@@ -1,3 +1,17 @@
 .idea
 api/node_modules
+
+# Vite react gitignore template
+# Logs
+web/logs
+web/*.log
+web/npm-debug.log*
+web/yarn-debug.log*
+web/yarn-error.log*
+web/pnpm-debug.log*
+web/lerna-debug.log*
+
 web/node_modules
+web/dist
+web/dist-ssr
+web/*.local
