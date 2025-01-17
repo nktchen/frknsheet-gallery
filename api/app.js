@@ -1,24 +1,25 @@
 const express = require("express");
 const CORS = require("cors");
 const fs = require("fs");
-const multer = require("multer");
+// const multer = require("multer");
 
 const app = express();
 const port = 5000;
 
 app.use(CORS());
 app.use(express.json()); // Middleware для обработки JSON
+// eslint-disable-next-line no-undef
 app.use("/images", express.static(__dirname + "/img"));
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "img");
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
-});
-const upload = multer({ storage: storage });
+//
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "img");
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, file.originalname);
+//   },
+// });
+// const upload = multer({ storage: storage });
 
 /**
  * GET : /api/projects
@@ -37,8 +38,6 @@ app.get("/api/images", (req, res) => {
     const filePaths = files.map(
       (file) => `${req.protocol}://${req.get("host")}/images/${file}`,
     ); // получаем ссылки к картинам4
-
-    projects;
     res.json(filePaths); // Отправляем массив путей к файлам в формате JSON
   });
 });
