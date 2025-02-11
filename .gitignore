@@ -1,5 +1,6 @@
 .idea
 api/node_modules
+api/img
 
 # Vite react gitignore template
 # Logs
