@@ -50,10 +50,15 @@ const upload = multer({ storage: storage });
  *  204 - no content
  **/
 app.get("/api/projects", (req, res) => {
-  pool.query("SELECT * FROM projects", (err, result) => {
-    if (err) return console.log(err);
-    res.json(result);
-  });
+  pool
+    .execute("SELECT * FROM projects")
+    .then(([result]) => {
+      console.log(result);
+      res.send(result);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   // fs.readdir("./img", (err, files) => {
   //   if (err) {
   //     console.log(err);
@@ -66,7 +71,7 @@ app.get("/api/projects", (req, res) => {
   // });
 });
 
-/** adds project
+/** adds project and images
  * POST : /api/projects
  * gets HTML form with enctype="multipart/form-data"
  * names - title, description
@@ -80,23 +85,30 @@ app.get("/api/projects", (req, res) => {
 app.post("/api/projects", upload.any(), (req, res) => {
   let imgFiles = req.files; //uploading files by multer
   if (!imgFiles) res.status(400).send("Ошибка при загрузке файлов");
+
   let date = new Date();
+  // adding projects to database
   pool
-    .query("INSERT INTO projects(title, description, date) VALUES (?, ?, ?)", [
-      req.body.title,
-      req.body.description,
-      `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${date.getDate()}`,
-    ])
+    .execute(
+      "INSERT INTO projects(title, description, date) VALUES (?, ?, ?)",
+      [
+        req.body.title,
+        req.body.description,
+        `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${date.getDate()}`,
+      ],
+    )
     .then(([result]) => {
-      console.log(result);
       const jobID = result.insertId;
-      return pool.execute(
-        "INSERT INTO images(project_id, image_filename) VALUES (?, ?)",
-        [jobID, "images"],
-      );
+      // adding images to database
+      for (let file of imgFiles) {
+        pool.execute(
+          "INSERT INTO images(project_id, image_filename) VALUES (?, ?)",
+          [jobID, file.filename],
+        );
+      }
     })
     .then(() => {
-      res.send(`Проект и изображение успешно добавлены`);
+      res.status(201).send(`Проект и изображение успешно добавлены`);
     })
     .catch((error) => {
       console.error(error);
