@@ -48,27 +48,28 @@ const upload = multer({ storage: storage });
  * responses :
  *  200 - successful operation
  *  204 - no content
+ *  500 - internal server error
  **/
-app.get("/api/projects", (req, res) => {
-  pool
-    .execute("SELECT * FROM projects")
-    .then(([result]) => {
-      console.log(result);
-      res.send(result);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-  // fs.readdir("./img", (err, files) => {
-  //   if (err) {
-  //     console.log(err);
-  //     return res.status(500).send("Ошибка чтения директории");
-  //   }
-  //   const filePaths = files.map(
-  //     (file) => `${req.protocol}://${req.get("host")}/images/${file}`,
-  //   ); // получаем ссылки к картинам4
-  //   res.json(); // Отправляем массив путей к файлам в формате JSON
-  // });
+app.get("/api/projects", async (req, res) => {
+  try {
+    const [projects] = await pool.execute("SELECT * FROM projects");
+
+    await Promise.all(
+      projects.map(async (project) => {
+        const [images] = await pool.execute(
+          "SELECT * FROM images WHERE project_id = ?",
+          [project.id],
+        );
+
+        project.images = images.map((img) => img.image_filename);
+      }),
+    );
+
+    res.status(200).send(projects);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
 });
 
 /** adds project and images
@@ -111,6 +112,7 @@ app.post("/api/projects", upload.any(), (req, res) => {
       res.status(201).send(`Проект и изображение успешно добавлены`);
     })
     .catch((error) => {
+      //TODO - добавить удаление при ошибке
       console.error(error);
       res
         .status(500)
