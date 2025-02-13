@@ -52,7 +52,7 @@ const upload = multer({ storage: storage });
  **/
 app.get("/api/projects", async (req, res) => {
   try {
-    const [projects] = await pool.execute("SELECT * FROM projects");
+    let [projects] = await pool.execute("SELECT * FROM projects");
 
     await Promise.all(
       projects.map(async (project) => {
@@ -61,7 +61,10 @@ app.get("/api/projects", async (req, res) => {
           [project.id],
         );
 
-        project.images = images.map((img) => img.image_filename);
+        project.images = images.map(
+          (img) =>
+            `${req.protocol}://${req.get("host")}/images/${img.image_filename}`,
+        );
       }),
     );
 
@@ -83,41 +86,38 @@ app.get("/api/projects", async (req, res) => {
  *  400 - bad request!
  *  500 - error while uploading
  **/
-app.post("/api/projects", upload.any(), (req, res) => {
+app.post("/api/projects", upload.any(), async (req, res) => {
   let imgFiles = req.files; //uploading files by multer
   if (!imgFiles) res.status(400).send("Ошибка при загрузке файлов");
 
   let date = new Date();
-  // adding projects to database
-  pool
-    .execute(
+  try {
+    let [result] = await pool.execute(
       "INSERT INTO projects(title, description, date) VALUES (?, ?, ?)",
       [
         req.body.title,
         req.body.description,
         `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${date.getDate()}`,
       ],
-    )
-    .then(([result]) => {
-      const jobID = result.insertId;
-      // adding images to database
-      for (let file of imgFiles) {
+    );
+
+    const jobID = result.insertId;
+    await Promise.all(
+      imgFiles.map(async (imgFile) => {
         pool.execute(
           "INSERT INTO images(project_id, image_filename) VALUES (?, ?)",
-          [jobID, file.filename],
+          [jobID, imgFile.filename],
         );
-      }
-    })
-    .then(() => {
-      res.status(201).send(`Проект и изображение успешно добавлены`);
-    })
-    .catch((error) => {
-      //TODO - добавить удаление при ошибке
-      console.error(error);
-      res
-        .status(500)
-        .send(`Ошибка при добавлении проекта в базу данных: ${error}`);
-    });
+      }),
+    );
+    res.status(201).send(`Проект и изображение успешно добавлены`);
+  } catch (error) {
+    //TODO - добавить удаление при ошибке
+    console.error(error);
+    res
+      .status(500)
+      .send(`Ошибка при добавлении проекта в базу данных: ${error}`);
+  }
 });
 
 app.listen(port, function () {
