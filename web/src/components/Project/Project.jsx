@@ -1,3 +1,4 @@
+import styles from "./Project.module.css";
 /* props - array with projects
   [
     {
@@ -5,16 +6,15 @@
       "title": string
       "description" : string
       "date" : YY-MM-dd
-      "imagesUrl" : [string]
+      "imagesUrls" : [string]
     }
   ]
 */
 // eslint-disable-next-line react/prop-types
 const Project = ({ imagesUrls, description, date, title }) => {
-  console.log(date);
   const formattedDate = new Date(date).toLocaleDateString();
   return (
-    <div>
+    <article className={styles["project-container"]}>
       <h3>{title}</h3>
       <p>{description}</p>
       <p>{formattedDate}</p>
@@ -22,7 +22,7 @@ const Project = ({ imagesUrls, description, date, title }) => {
       {imagesUrls.map((url, index) => (
         <img alt={description} key={index} src={url} />
       ))}
-    </div>
+    </article>
   );
 };
 
