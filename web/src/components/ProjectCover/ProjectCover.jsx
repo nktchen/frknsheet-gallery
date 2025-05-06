@@ -1,4 +1,5 @@
 import styles from "./ProjectCover.module.css";
+import { useNavigate } from "react-router-dom";
 /* props - array with projects
   [
     {
@@ -11,10 +12,14 @@ import styles from "./ProjectCover.module.css";
   ]
 */
 // eslint-disable-next-line react/prop-types
-const ProjectCover = ({ imagesUrls, date, title }) => {
+const ProjectCover = ({ id, imagesUrls, date, title }) => {
   const formattedDate = new Date(date).toLocaleDateString();
+  const navigate = useNavigate();
   return (
-    <article className={styles.ProjectCover}>
+    <article
+      className={styles.ProjectCover}
+      onClick={() => navigate(`/projects/${id}`)}
+    >
       <img src={imagesUrls[0]} alt={title} />
       <p>{formattedDate}</p>
       <h3>{title}</h3>
