@@ -15,7 +15,7 @@ const Project = () => {
         setProject(data);
       })
       .catch((err) => console.error("Ошибка при получении проекта:", err)); //TODO add Error page
-  }, []);
+  });
   const formattedDate = new Date(project.date).toLocaleDateString();
   return (
     <article className={styles["project-container"]}>
