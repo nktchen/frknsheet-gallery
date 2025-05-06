@@ -1,26 +1,29 @@
 import styles from "./Project.module.css";
-/* props - array with projects
-  [
-    {
-      "id" : int
-      "title": string
-      "description" : string
-      "date" : YY-MM-dd
-      "imagesUrls" : [string]
-    }
-  ]
-*/
-// eslint-disable-next-line react/prop-types
-const Project = ({ imagesUrls, description, date, title }) => {
-  const formattedDate = new Date(date).toLocaleDateString();
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+
+const Project = () => {
+  const [project, setProject] = useState({}); //TODO add sceleton
+  let params = useParams();
+
+  useEffect(() => {
+    axios
+      .get(`http://127.0.0.1:5000/api/projects/${params.id}`)
+      .then((res) => res.data)
+      .then((data) => {
+        setProject(data);
+      })
+      .catch((err) => console.error("Ошибка при получении проекта:", err)); //TODO add Error page
+  }, []);
+  const formattedDate = new Date(project.date).toLocaleDateString();
   return (
     <article className={styles["project-container"]}>
-      <h3>{title}</h3>
-      <p>{description}</p>
+      <h3>{project.title}</h3>
+      <p>{project.description}</p>
       <p>{formattedDate}</p>
-      {/* eslint-disable-next-line react/prop-types */}
-      {imagesUrls.map((url, index) => (
-        <img alt={description} key={index} src={url} />
+      {project.imagesUrls.map((url, index) => (
+        <img alt={project.description} key={index} src={url} />
       ))}
     </article>
   );
