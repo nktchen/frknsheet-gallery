@@ -1,17 +1,7 @@
 import styles from "./ProjectCover.module.css";
 import { useNavigate } from "react-router-dom";
-/* props - array with projects
-  [
-    {
-      "id" : int
-      "title": string
-      "description" : string
-      "date" : YY-MM-dd
-      "imagesUrls" : [string]
-    }
-  ]
-*/
-// eslint-disable-next-line react/prop-types
+import PropTypes from "prop-types";
+
 const ProjectCover = ({ id, imagesUrls, date, title }) => {
   const formattedDate = new Date(date).toLocaleDateString();
   const navigate = useNavigate();
@@ -25,6 +15,13 @@ const ProjectCover = ({ id, imagesUrls, date, title }) => {
       <h3>{title}</h3>
     </article>
   );
+};
+
+ProjectCover.propTypes = {
+  id: PropTypes.number.isRequired,
+  imagesUrls: PropTypes.array.isRequired,
+  date: PropTypes.string.isRequired, //YY-mm-dd
+  title: PropTypes.string.isRequired,
 };
 
 export default ProjectCover;
