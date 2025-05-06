@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ProjectCover from "../../ProjectCover/ProjectCover.jsx";
+import Skeleton from "../../assets/Skeleton.jsx";
 import styles from "./ProjectsScreen.module.css";
 
 const ProjectsScreen = () => {
-  const [projects, setProjects] = useState([]); //TODO add sceleton
+  const [projects, setProjects] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     axios
@@ -12,15 +14,18 @@ const ProjectsScreen = () => {
       .then((res) => res.data)
       .then((data) => {
         setProjects(data);
+        setIsLoading(false);
       })
       .catch((err) => console.error("Ошибка при получении проектов:", err)); //TODO add Error page
   }, []);
 
   return (
     <section className={styles.ProjectScreen}>
-      {projects.map((project) => (
-        <ProjectCover key={project.id} {...project} />
-      ))}
+      {isLoading
+        ? [...new Array(8)].map((_, index) => <Skeleton key={index}></Skeleton>)
+        : projects.map((project) => (
+            <ProjectCover key={project.id} {...project} />
+          ))}
     </section>
   );
 };
