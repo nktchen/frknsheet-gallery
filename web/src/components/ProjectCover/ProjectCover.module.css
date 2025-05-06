@@ -2,4 +2,13 @@
     width: 300px;
     display: flex;
     flex-direction: column;
+    gap: 20px;
+}
+.ProjectCover *{
+    margin: 0;
+    /*TODO какого фига у p был марджин*/
+}
+
+.ProjectCover:hover {
+    cursor: pointer;
 }
