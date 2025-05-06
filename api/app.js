@@ -30,6 +30,7 @@ const storage = multer.diskStorage({
     cb(null, `${randomUUID()}.${filenameExtension}`);
   },
 });
+
 const upload = multer({ storage: storage });
 
 /**
@@ -37,7 +38,7 @@ const upload = multer({ storage: storage });
  * POST : /api/projects
  **/
 app.post("/api/projects", upload.any(), async (req, res) => {
-  const imgFiles = req.files; // Uploading files by multer
+  const imgFiles = req.files;
 
   if (!imgFiles || imgFiles.length === 0) {
     return res.status(400).send({ message: "Ошибка при загрузке файлов" });
@@ -87,7 +88,6 @@ app.post("/api/projects", upload.any(), async (req, res) => {
  * Returns JSON with all projects
  * GET : /api/projects
  * returns JSON:
- *  {
  *   [
  *     {
  *       "id" : int
@@ -97,7 +97,6 @@ app.post("/api/projects", upload.any(), async (req, res) => {
  *       "imagesUrls" : string[]
  *     }
  *   ]
- * }
  **/
 app.get("/api/projects", async (req, res) => {
   try {
