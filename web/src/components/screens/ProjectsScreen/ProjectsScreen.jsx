@@ -20,13 +20,17 @@ const ProjectsScreen = () => {
   }, []);
 
   return (
-    <section className={styles.ProjectScreen}>
-      {isLoading
-        ? [...new Array(8)].map((_, index) => <Skeleton key={index}></Skeleton>)
-        : projects.map((project) => (
-            <ProjectCover key={project.id} {...project} />
-          ))}
-    </section>
+    <div className={styles.Wrapper}>
+      {[...new Array(3)].map((_, i) => (
+        <section className={styles.ProjectScreen} key={i}>
+          {isLoading
+            ? [...new Array(3)].map((_, j) => <Skeleton key={j}></Skeleton>)
+            : projects[i + 1].map((project) => (
+                <ProjectCover key={project.id} {...project} />
+              ))}
+        </section>
+      ))}
+    </div>
   );
 };
 
