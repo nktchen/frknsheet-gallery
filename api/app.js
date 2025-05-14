@@ -5,6 +5,7 @@ const multer = require("multer");
 const { randomUUID } = require("crypto");
 const fs = require("fs");
 const path = require("path");
+const { imageSizeFromFile } = require("image-size/fromFile");
 
 const app = express();
 const port = 5000;
@@ -39,30 +40,54 @@ const upload = multer({ storage: storage });
  **/
 app.post("/api/projects", upload.any(), async (req, res) => {
   const imgFiles = req.files;
-
   if (!imgFiles || imgFiles.length === 0) {
     return res.status(400).send({ message: "Ошибка при загрузке файлов" });
   }
 
-  const date = new Date();
+  // функция выбирает, в какую из трех колонок вставить картинку
+  const chooseColumn = async () => {
+    const columnsHeight = [0, 0, 0];
+    try {
+      const [projects] = await pool.execute("SELECT * FROM projects");
+
+      if (projects.length === 0) {
+        return 0;
+      }
+
+      await Promise.all(
+        projects.map(async (project) => {
+          const [images] = await pool.execute(
+            "SELECT * FROM images WHERE project_id = ?",
+            [project.id],
+          );
+          columnsHeight[project.columnNum] += images[0].height;
+        }),
+      );
+      console.log(columnsHeight);
+      return columnsHeight.indexOf(Math.min(...columnsHeight));
+    } catch {
+      return 0;
+    }
+  };
 
   try {
+    const date = new Date();
+    const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    const columnNum = await chooseColumn();
+
     const [result] = await pool.execute(
-      "INSERT INTO projects(title, description, date) VALUES (?, ?, ?)",
-      [
-        req.body.title,
-        req.body.description,
-        `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`,
-      ],
+      "INSERT INTO projects(title, description, date, columnNum) VALUES (?, ?, ?, ?)",
+      [req.body.title, req.body.description, formattedDate, columnNum],
     );
 
-    const jobID = result.insertId;
+    const projectID = result.insertId;
 
     await Promise.all(
       imgFiles.map(async (imgFile) => {
+        const dimensions = await imageSizeFromFile(imgFile.path);
         await pool.execute(
-          "INSERT INTO images(project_id, image_filename) VALUES (?, ?)",
-          [jobID, imgFile.filename],
+          "INSERT INTO images(project_id, image_filename, height) VALUES (?, ?, ?)",
+          [projectID, imgFile.filename, dimensions.height],
         );
       }),
     );
@@ -88,7 +113,8 @@ app.post("/api/projects", upload.any(), async (req, res) => {
  * Returns JSON with all projects
  * GET : /api/projects
  * returns JSON:
- *   [
+ * {
+ *   1 : [
  *     {
  *       "id" : int
  *       "title": string
@@ -96,7 +122,10 @@ app.post("/api/projects", upload.any(), async (req, res) => {
  *       "date" : YY-MM-dd
  *       "imagesUrls" : string[]
  *     }
- *   ]
+ *   ] (array with objs)
+ *   2 : same array structure
+ *   3 : same array structure
+ * }
  **/
 app.get("/api/projects", async (req, res) => {
   try {
@@ -120,7 +149,15 @@ app.get("/api/projects", async (req, res) => {
       }),
     );
 
-    res.status(200).send(projects);
+    const splitProjects = (projects) => {
+      const result = { 1: [], 2: [], 3: [] };
+      projects.forEach((project) => {
+        result[project.columnNum + 1].push(project);
+      });
+      return result;
+    };
+
+    res.status(200).send(splitProjects(projects));
   } catch (err) {
     console.error(err);
     res.status(500).send({ message: "Внутренняя ошибка сервера" });
