@@ -11,8 +11,10 @@ const ProjectCover = ({ id, imagesUrls, date, title }) => {
       onClick={() => navigate(`/projects/${id}`)}
     >
       <img src={imagesUrls[0]} alt={title} />
-      <p>{formattedDate}</p>
-      <h3>{title}</h3>
+      <div className={styles.ProjectInfoWrapper}>
+        <h3>{title}</h3>
+        <p>{formattedDate}</p>
+      </div>
     </article>
   );
 };
