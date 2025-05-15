@@ -1,0 +1,20 @@
+.Popup {
+    position: fixed;
+    bottom: 10px;
+    right: 20px;
+
+    height: 70px;
+    padding: 20px 30px;
+    background-color: #FFFFFF;
+    color: #000000;
+    border-radius: 10px;
+
+
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.Popup img {
+    height: 50%;
+}
