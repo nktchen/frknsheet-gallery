@@ -3,10 +3,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import Skeleton from "../assets/Skeleton.jsx";
+import Popup from "../assets/Popup/Popup.jsx";
 
 const Project = () => {
   const [project, setProject] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [isPopup, setIsPopup] = useState(false);
+  const [successInfo, setSuccessInfo] = useState(null); // null or {isSuccessfull: boolean, text: string}
+
   let params = useParams();
 
   useEffect(() => {
@@ -16,7 +20,13 @@ const Project = () => {
         setProject(res.data);
         setIsLoading(false);
       })
-      .catch((err) => console.error("Ошибка при получении проекта:", err)); //TODO add Error page
+      .catch((err) => {
+        setSuccessInfo({
+          isSuccessfull: false,
+          text: "Ошибка при получении проекта:" + err,
+        });
+        setIsPopup(true);
+      });
   }, [params.id]);
   return isLoading ? (
     <Skeleton></Skeleton>
@@ -28,6 +38,13 @@ const Project = () => {
       {project.imagesUrls.map((url, index) => (
         <img alt={project.description} key={index} src={url} />
       ))}
+
+      {isPopup && (
+        <Popup
+          isSuccessfull={successInfo.isSuccessfull}
+          text={successInfo.text}
+        />
+      )}
     </article>
   );
 };

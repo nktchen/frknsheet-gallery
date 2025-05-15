@@ -3,10 +3,13 @@ import axios from "axios";
 import ProjectCover from "../../ProjectCover/ProjectCover.jsx";
 import Skeleton from "../../assets/Skeleton.jsx";
 import styles from "./ProjectsScreen.module.css";
+import Popup from "../../assets/Popup/Popup.jsx";
 
 const ProjectsScreen = () => {
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isPopup, setIsPopup] = useState(false);
+  const [successInfo, setSuccessInfo] = useState(null); // null or {isSuccessfull: boolean, text: string}
 
   useEffect(() => {
     axios
@@ -16,7 +19,13 @@ const ProjectsScreen = () => {
         setProjects(data);
         setIsLoading(false);
       })
-      .catch((err) => console.error("Ошибка при получении проектов:", err)); //TODO add Error page
+      .catch((err) => {
+        setSuccessInfo({
+          isSuccessfull: false,
+          text: "Ошибка при получении проектов:" + err,
+        });
+        setIsPopup(true);
+      });
   }, []);
 
   return (
@@ -30,6 +39,13 @@ const ProjectsScreen = () => {
               ))}
         </section>
       ))}
+
+      {isPopup && (
+        <Popup
+          isSuccessfull={successInfo.isSuccessfull}
+          text={successInfo.text}
+        />
+      )}
     </div>
   );
 };
