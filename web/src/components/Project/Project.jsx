@@ -31,13 +31,17 @@ const Project = () => {
   return isLoading ? (
     <Skeleton></Skeleton>
   ) : (
-    <article className={styles["project-container"]}>
-      <h3>{project.title}</h3>
-      <p>{project.description}</p>
-      <p>{new Date(project.date).toLocaleDateString()}</p>
-      {project.imagesUrls.map((url, index) => (
-        <img alt={project.description} key={index} src={url} />
-      ))}
+    <article className={styles.projectWrapper}>
+      <div className={styles.imgWrapper}>
+        {project.imagesUrls.map((url, index) => (
+          <img alt={project.description} key={index} src={url} />
+        ))}
+      </div>
+      <div className={styles.infoWrapper}>
+        <h3>{project.title}</h3>
+        <h6>{new Date(project.date).toLocaleDateString()}</h6>
+        <p>{project.description}</p>
+      </div>
 
       {isPopup && (
         <Popup

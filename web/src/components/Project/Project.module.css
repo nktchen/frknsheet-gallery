@@ -1,3 +1,32 @@
-.project-container {
+.projectWrapper {
     display: flex;
+    gap: 30px   ;
+}
+
+.imgWrapper {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px ;
+}
+
+.infoWrapper {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+}
+
+.infoWrapper h3 {
+    font-size: 50px;
+}
+
+.infoWrapper h6 {
+    margin-top: 10px;
+    font-size: 15px;
+}
+
+.infoWrapper p {
+
+    margin-top: 30px;
+    font-size: 25px;
 }
