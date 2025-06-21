@@ -2,6 +2,7 @@
 api/node_modules
 api/img
 api/package-lock.json
+api/.env
 
 # Vite react gitignore template
 # Logs
