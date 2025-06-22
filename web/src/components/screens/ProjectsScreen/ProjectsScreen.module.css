@@ -1,15 +1,12 @@
-.ProjectScreen {
-    padding: 20px;
+.ProjectColumn {
     display: flex;
-    gap: 50px
+    flex-direction: column;
+    gap: 40px
 }
 
 .Wrapper {
-    display: flex;
-}
-
-.Wrapper > section {
-    width: 33%;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    width: 100%;
 }

@@ -31,7 +31,7 @@ const ProjectsScreen = () => {
   return (
     <div className={styles.Wrapper}>
       {[...new Array(3)].map((_, i) => (
-        <section className={styles.ProjectScreen} key={i}>
+        <section className={styles.ProjectColumn} key={i}>
           {isLoading
             ? [...new Array(3)].map((_, j) => <Skeleton key={j}></Skeleton>)
             : projects[i + 1].map((project) => (
