@@ -11,5 +11,6 @@ CREATE TABLE IF NOT EXISTS images (
                                       project_id INT NOT NULL,
                                       image_filename VARCHAR(255) NOT NULL,
                                       height INT NOT NULL,
+                                      width INT NOT NULL,
                                       FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
 );

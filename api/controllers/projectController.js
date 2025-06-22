@@ -8,10 +8,12 @@ exports.addProject = async (req, res) => {
   }
 
   try {
-    const date = new Date();
-    const formatted = `${date.getFullYear()}-${String(
-      date.getMonth() + 1,
-    ).padStart(2, "0")} - ${String(date.getDate()).padStart(2, "0")}`;
+    const now = new Date();
+    const formatted = now.toLocaleDateString("ru-RU", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
     const columnNum = await projectService.chooseColumn();
 
     const projectId = await projectService.addProject(
@@ -24,7 +26,12 @@ exports.addProject = async (req, res) => {
     await Promise.all(
       files.map(async (file) => {
         const dims = await imageService.getDimensions(file.path);
-        await projectService.addImage(projectId, file.filename, dims.height);
+        await projectService.addImage(
+          projectId,
+          file.filename,
+          dims.height,
+          dims.width,
+        );
       }),
     );
 
@@ -67,7 +74,7 @@ exports.getProjectById = async (req, res) => {
   const id = req.params.id;
   try {
     const projects = await projectService.getAllProjects();
-    const project = projects.find((p) => p.id == id);
+    const project = projects.find((p) => p.id === id);
     if (!project) {
       return res.status(404).send({ message: "Проект не найден" });
     }

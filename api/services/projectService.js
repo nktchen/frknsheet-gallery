@@ -12,16 +12,14 @@ exports.chooseColumn = async () => {
   await Promise.all(
     projects.map(async ({ id, columnNum }) => {
       const [images] = await pool.execute(
-        "SELECT height FROM images WHERE project_id = ?",
+        "SELECT height, width FROM images WHERE project_id = ?",
         [id],
       );
-      columnsHeight[columnNum] = images.reduce(
-        (sum, img) => sum + img.height,
-        0,
-      );
+      columnsHeight[columnNum] +=
+        (400 / images[0].width) * images[0].height + 40;
+      // привожу высоту к растянутому до 400 пикселей в ширину изображению и добавляю gap между изображениями
     }),
   );
-
   return columnsHeight.indexOf(Math.min(...columnsHeight));
 };
 
@@ -33,10 +31,10 @@ exports.addProject = async (title, description, date, columnNum) => {
   return result.insertId;
 };
 
-exports.addImage = async (projectId, filename, height) => {
+exports.addImage = async (projectId, filename, height, width) => {
   return pool.execute(
-    "INSERT INTO images(project_id, image_filename, height) VALUES (?, ?, ?)",
-    [projectId, filename, height],
+    "INSERT INTO images(project_id, image_filename, height, width) VALUES (?, ?, ?, ?)",
+    [projectId, filename, height, width],
   );
 };
 
