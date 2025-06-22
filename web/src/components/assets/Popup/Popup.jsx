@@ -7,7 +7,7 @@ const Popup = (props) => {
   return (
     <div className={styles.Popup}>
       <img
-        src={props.isSuccessfull ? "/public/success.png" : "/public/error.png"}
+        src={props.isSuccessfull ? "/success.png" : "/error.png"}
         alt={"icon"}
       />
       <p>{msg}</p>

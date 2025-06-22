@@ -31,7 +31,7 @@ const Project = () => {
   return isLoading ? (
     <Skeleton></Skeleton>
   ) : (
-    <article className={styles.projectWrapper}>
+    <section className={styles.projectWrapper}>
       <div className={styles.imgWrapper}>
         {project.imagesUrls.map((url, index) => (
           <img alt={project.description} key={index} src={url} />
@@ -49,7 +49,7 @@ const Project = () => {
           text={successInfo.text}
         />
       )}
-    </article>
+    </section>
   );
 };
 
