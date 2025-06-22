@@ -1,0 +1,41 @@
+.projectWrapper {
+    display: grid;
+    grid-template-columns: 60% auto;
+    gap: 30px;
+    padding: 30px 0;
+}
+
+.imgWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 30px ;
+}
+
+.infoWrapper {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+}
+
+.infoWrapper input {
+    width: 100%;
+    border: none;
+    background: none;
+    outline: none
+}
+
+.infoTitle {
+    font-size: 50px;
+}
+
+.infoDate {
+    margin-top: 10px;
+    font-size: 15px;
+
+}
+
+.infoDescription {
+
+    margin-top: 30px;
+    font-size: 25px;
+}
