@@ -71,7 +71,7 @@ exports.getAllProjects = async (req, res) => {
 };
 
 exports.getProjectById = async (req, res) => {
-  const id = req.params.id;
+  const id = +req.params.id;
   try {
     const projects = await projectService.getAllProjects();
     const project = projects.find((p) => p.id === id);

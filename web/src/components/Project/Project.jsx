@@ -28,6 +28,11 @@ const Project = () => {
         setIsPopup(true);
       });
   }, [params.id]);
+
+  const toDate = (stringDate) => {
+    const [day, month, year] = stringDate.split(".");
+    return new Date(`${year}-${month}-${day}`);
+  };
   return isLoading ? (
     <Skeleton></Skeleton>
   ) : (
@@ -39,7 +44,7 @@ const Project = () => {
       </div>
       <div className={styles.infoWrapper}>
         <h3>{project.title}</h3>
-        <h6>{new Date(project.date).toLocaleDateString()}</h6>
+        <h6>{toDate(project.date).toLocaleDateString()}</h6>
         <p>{project.description}</p>
       </div>
 

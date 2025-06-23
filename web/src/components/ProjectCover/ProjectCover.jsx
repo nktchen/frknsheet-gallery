@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 
 const ProjectCover = ({ id, imagesUrls, date, title }) => {
-  const formattedDate = new Date(date).toLocaleDateString();
+  const [day, month, year] = date.split(".");
+  const formattedDate = new Date(
+    `${year}-${month}-${day}`,
+  ).toLocaleDateString();
   const navigate = useNavigate();
   return (
     <article
