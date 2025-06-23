@@ -1,0 +1,34 @@
+services:
+  frontend:
+    build: ./web
+    restart: always
+    ports:
+      - "4173:4173"
+    depends_on:
+      - backend
+
+  backend:
+    build: ./api
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: gallery
+    healthcheck:
+      test: [ "CMD", "mysql", "-uroot", "-p${MYSQL_ROOT_PASSWORD}", "-h", "localhost", "-e", "SELECT 1" ]
+      interval: 10s
+      timeout: 10s
+      retries: 15
+
+    volumes:
+      - mysql-data:/var/lib/mysql
+volumes:
+  mysql-data:

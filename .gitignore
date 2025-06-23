@@ -1,4 +1,5 @@
 .idea
+.env
 api/node_modules
 api/img
 api/package-lock.json
