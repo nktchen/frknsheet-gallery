@@ -10,7 +10,7 @@ app.use(CORS());
 app.use(express.json());
 app.use("/images", express.static(path.join(__dirname, "img")));
 app.use("/api/projects", require("./routes/projects"));
-app.use((err, req, res, next) => {
+app.use((err, req, res, _) => {
   console.error(err.stack);
   res.status(500).json({ message: "Внутренняя ошибка сервера" });
 });
