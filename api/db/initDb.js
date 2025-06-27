@@ -1,3 +1,4 @@
+require("dotenv").config();
 const mysql = require("mysql2/promise");
 
 (async () => {
@@ -7,13 +8,12 @@ const mysql = require("mysql2/promise");
     user: "root",
     password: process.env.DB_PASSWORD,
   });
-
   await connection.query(`
     CREATE TABLE IF NOT EXISTS projects (
       id INT AUTO_INCREMENT PRIMARY KEY,
       title VARCHAR(255) NOT NULL,
       description TEXT,
-      date DATE NOT NULL,
+      date VARCHAR(32) NOT NULL,
       columnNum TINYINT NOT NULL
     )
   `);

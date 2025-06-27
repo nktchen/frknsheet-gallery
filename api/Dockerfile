@@ -11,5 +11,5 @@ COPY . .
 
 EXPOSE 5000
 
-CMD ["node", "server.js"]
+CMD ["sh", "-c", "node ./db/initDb.js && node server.js"]
 
