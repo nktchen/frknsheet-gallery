@@ -53,14 +53,14 @@ exports.getAllProjects = async (req, res) => {
       return res.status(404).send({ message: "Нет проектов" });
     }
 
-    const result = { 1: [], 2: [], 3: [] };
+    const result = { 0: [], 1: [], 2: [] };
     for (const proj of projects) {
       const images = await projectService.getImagesByProject(proj.id);
       proj.imagesUrls = images.map(
         (name) =>
           `${req.protocol}://${req.hostname}:${process.env.PORT}/images/${name}`,
       );
-      result[proj.columnNum + 1].push(proj);
+      result[proj.columnNum].push(proj);
     }
 
     res.send(result);
